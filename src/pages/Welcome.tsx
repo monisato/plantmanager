@@ -1,42 +1,58 @@
-import React, { useState } from 'react';
-// useState armazena os estados
+import React from 'react';
 
-import { SafeAreaView, Text, Image, StyleSheet } from 'react-native';
-// TouchableOpacity, permite alterar opacidade ao toque
-// View pega toda a área da tela (incluso area de icones do celular)
-// SafeAreaView pega apenas area "segura", funciona apenas no iOS
+import { 
+    SafeAreaView, // SafeAreaView pega apenas area "segura", funciona apenas no iOS
+    View, // View pega toda a área da tela (incluso area de icones do celular), pode ser usado no lugar do SafeAreaView
+    Text, 
+    Image, 
+    TouchableOpacity, // permite alterar opacidade ao toque
+    StyleSheet,
+    Dimensions, 
+    StatusBar 
+} from 'react-native';
 
-// necessita do custom.d.ts para identificar o arquivo (typescript)
+
+import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/core';
+
 import wateringImg from '../assets/watering.png';
+// necessita do custom.d.ts para identificar o arquivo png (typescript)
+
 import colors from '../styles/colors';
-import { Button } from '../components/Button';
+import fonts from '../styles/fonts';
+// arquivo typescript com as cores e fontes padrão
 
 export function Welcome() {
-    const [visible, setVisible] = useState(false);
-
-    function handleVisibility(){
-        setVisible(true)
+    const navigation = useNavigation();
+    
+    function handleStart(){
+        navigation.navigate('UserIdentification');
     }
-
+    
     return ( 
         <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>
-                Gerencie {'\n'}
-                suas plantas de {'\n'}
-                forma fácil
-            </Text>
-
-            {
-                visible &&
-                <Image source={wateringImg} style={styles.image}/>
-            }
-
-            <Text style={styles.subtitle}>
-                Não esqueça mais de regar suas plantas. 
-                Nós cuidamos de lembrar você sempre que precisar.
-            </Text>
-            
-            <Button title=">" />           
+            <View style={styles.wrapper}>
+                <Text style={styles.title}>
+                    Gerencie {'\n'}
+                    suas plantas de {'\n'}
+                    forma fácil
+                </Text>
+                
+                <Image source={wateringImg} style={styles.image} resizeMode="contain" />
+        
+                <Text style={styles.subtitle}>
+                    Não esqueça mais de regar suas plantas. 
+                    Nós cuidamos de lembrar você sempre que precisar.
+                </Text>
+                
+                <TouchableOpacity 
+                    style={styles.button} 
+                    activeOpacity={0.7}
+                    onPress={handleStart}
+                >
+                    <Feather name="chevron-right" style={styles.buttonIcon}/>
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     )
 }
@@ -44,25 +60,44 @@ export function Welcome() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginTop: StatusBar.currentHeight // pega a altura da barra de status e coloca na margem
+    },
+    wrapper: {
+        flex: 1,
         alignItems: 'center',
-        justifyContent: 'space-between',
-        margin: 10 // margem a mais para android
+        justifyContent: 'space-around',
+        paddingHorizontal: 20
     },
     title: {
-        fontSize: 32,
-        fontWeight: 'bold',
+        fontSize: 28,
         textAlign: 'center',
         color: colors.heading,
-        marginTop: 38
+        marginTop: 38,
+        fontFamily: fonts.heading,
+        lineHeight: 34
     },
     image: {
-        width: 292,
-        height: 284
+        height: Dimensions.get('window').width * 0.7 // dimensions.get pega as dimensões da tela 
     },
     subtitle: {
         textAlign: 'center',
         fontSize: 18,
         paddingHorizontal: 20,
-        color: colors.heading
+        color: colors.heading,
+        fontFamily: fonts.text
     },
+    button: {
+        backgroundColor: colors.green,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 16,
+        marginBottom: 10,
+        height: 56,
+        width: 56,
+        paddingHorizontal: 10
+    },
+    buttonIcon: {
+        color: colors.white,
+        fontSize: 32
+    }
 });
