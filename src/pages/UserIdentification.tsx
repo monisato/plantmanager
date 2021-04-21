@@ -6,7 +6,9 @@ import {
     View,
     TextInput, 
     KeyboardAvoidingView, // para iOS, ao abrir o teclado o conteúdo sobe, android faz sozinho
-    Platform
+    TouchableWithoutFeedback,
+    Platform,
+    Keyboard
 } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 
@@ -42,38 +44,43 @@ export function UserIdentification(){
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                <View style={styles.content}>
-                    <View style={styles.form}>
-                        <View style={styles.header}>
-                            <Text style={styles.emoji}>
-                                {isFilled ? '😀' : '😄'}
-                            </Text>
-                            <Text style={styles.title}>
-                                Como podemos {'\n'}
-                                chamar você?
-                            </Text>
-                        </View>
+            <KeyboardAvoidingView 
+                style={styles.container} 
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={styles.content}>
+                        <View style={styles.form}>
+                            <View style={styles.header}>
+                                <Text style={styles.emoji}>
+                                    {isFilled ? '😀' : '😄'}
+                                </Text>
+                                <Text style={styles.title}>
+                                    Como podemos {'\n'}
+                                    chamar você?
+                                </Text>
+                            </View>
 
-                        <TextInput 
-                            style={[
-                                styles.input,
-                                (isFocused || isFilled) && { borderColor: colors.green } // && adiciona propriedades
-                            ]} 
-                            placeholder="Digite um nome" 
-                            onBlur={handleInputBlur} // quando o elemento está fora da seleção/foco
-                            onFocus={handleInputFocus} // quando está selecionado/focado
-                            onChangeText={handleInputChange}
-                        />
-                        
-                        <View style={styles.footer}>
-                            <Button 
-                                title="Confirmar"
-                                onPress={handleSubmit}
+                            <TextInput 
+                                style={[
+                                    styles.input,
+                                    (isFocused || isFilled) && { borderColor: colors.green } // && adiciona propriedades
+                                ]} 
+                                placeholder="Digite um nome" 
+                                onBlur={handleInputBlur} // quando o elemento está fora da seleção/foco
+                                onFocus={handleInputFocus} // quando está selecionado/focado
+                                onChangeText={handleInputChange}
                             />
+                            
+                            <View style={styles.footer}>
+                                <Button 
+                                    title="Confirmar"
+                                    onPress={handleSubmit}
+                                />
+                            </View>
                         </View>
                     </View>
-                </View>
+                </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
