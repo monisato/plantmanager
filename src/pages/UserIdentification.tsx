@@ -46,9 +46,9 @@ export function UserIdentification(){
         <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView 
                 style={styles.container} 
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // sobe a interface para não ficar oculta pelo teclado
             >
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss} /* clique fora do teclado, fecha o teclado */ >
                     <View style={styles.content}>
                         <View style={styles.form}>
                             <View style={styles.header}>
