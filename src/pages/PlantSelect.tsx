@@ -6,6 +6,7 @@ import {
     FlatList,
     ActivityIndicator
 } from'react-native';
+import { useNavigation } from '@react-navigation/core';
 
 import { EnvironmentButton } from '../components/EnvironmentButton';
 import { Header } from '../components/Header';
@@ -44,7 +45,8 @@ export function PlantSelect(){
 
     const [page, setPage] = useState(1);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [loadedAll, setLoadedAll] = useState(false);
+
+    const navigation = useNavigation();
 
     function handleEnvironmentSelected(environment: string) {
         setEnvironmentSelected(environment);
@@ -85,6 +87,10 @@ export function PlantSelect(){
         fetchPlants();
     }
 
+    function handlePlantSelect(plant: PlantProps) {
+        navigation.navigate('PlantSave', { plant });
+    }
+
     // carregar antes dos elementos da interface, função async dentro do useEffect pois não é possivel colocar função async no useEffect
     useEffect(() => {
         async function fetchEnvironment(){ // ?_sort=title&_order=asc para ordenar por ordem alfabetica
@@ -123,6 +129,7 @@ export function PlantSelect(){
             <View>
                 <FlatList 
                     data={environments}
+                    keyExtractor={(item) => String(item.key)}
                     renderItem={({ item }) => (
                         <EnvironmentButton 
                             title={item.title}
@@ -139,8 +146,9 @@ export function PlantSelect(){
             <View style={styles.plants}>
                 <FlatList 
                     data={filteredPlants}
+                    keyExtractor={(item) => String(item.id)}
                     renderItem={({ item }) => (
-                        <PlantCardPrimary data={item}/>
+                        <PlantCardPrimary data={item} onPress={() => handlePlantSelect(item)}/>
                     )}
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
