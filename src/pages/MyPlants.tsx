@@ -7,8 +7,11 @@ import { pt } from 'date-fns/locale';
 import waterdrop from '../assets/waterdrop.png';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
+
 import { loadPlant, PlantProps } from '../libs/storage';
+
 import { PlantCardSecondary } from '../components/PlantCardSecondary';
+import { Load } from '../components/Load';
 
 export function MyPlants() {
     const [myPlants, setMyPlants] = useState<PlantProps[]>([]);
@@ -36,6 +39,9 @@ export function MyPlants() {
         loadStorageData();
         
     }, [])
+
+    if(loading)
+        return <Load />
 
     return (
         <View style={styles.container}>
