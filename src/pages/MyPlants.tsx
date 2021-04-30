@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Image, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, Alert } from 'react-native';
 import { Header } from '../components/Header';
 import { formatDistance } from 'date-fns';
 import { pt } from 'date-fns/locale';
@@ -8,7 +8,7 @@ import waterdrop from '../assets/waterdrop.png';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
-import { loadPlant, PlantProps } from '../libs/storage';
+import { loadPlant, PlantProps, removePlant } from '../libs/storage';
 
 import { PlantCardSecondary } from '../components/PlantCardSecondary';
 import { Load } from '../components/Load';
@@ -18,6 +18,29 @@ export function MyPlants() {
     const [loading, setLoading] = useState(true);  
     const [nextWatered, setNextWatered] = useState<string>();
 
+    function handleRemove(plant:PlantProps) {
+        Alert.alert('Remover', `Deseja remover a ${plant.name}?`, [
+            {
+                text: 'Não 🙏',
+                style: 'cancel'
+            },
+            {
+                text: 'Sim 🗑️',
+                onPress: async () => {
+                    try {
+                        await removePlant(plant.id);
+                        setMyPlants((oldData) => (
+                            oldData.filter((item) => item.id != plant.id)
+                        ));
+
+                    } catch(error) {
+                        Alert.alert('Não foi possível remover!');
+                    }
+                }
+            }
+        ]);
+    }
+
     useEffect(() => {
         async function loadStorageData() {
             const plantsStoraged = await loadPlant();
@@ -26,7 +49,7 @@ export function MyPlants() {
                 new Date(plantsStoraged[0].dateTimeNotification).getTime(),
                 new Date().getTime(),
                 { locale: pt }
-            )
+            );
 
             setNextWatered(
                 `Não esqueça de regar a ${plantsStoraged[0].name} à ${nextTime} horas.`
@@ -63,10 +86,12 @@ export function MyPlants() {
                     data={myPlants}
                     keyExtractor={(item) => String(item.id)}
                     renderItem={({item}) => (
-                        <PlantCardSecondary data={item} />
+                        <PlantCardSecondary 
+                            data={item} 
+                            handleRemove={() => {handleRemove(item)}}
+                        />
                     )}     
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ flex: 1 }}               
+                    showsVerticalScrollIndicator={false}               
                 />
             </View>
             
@@ -87,14 +112,14 @@ const styles = StyleSheet.create({
         backgroundColor: colors.blue_light,
         paddingHorizontal: 20,
         borderRadius: 20,
-        height: 110,
+        height: 90,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
     },
     spotlightImage: {
-        width: 60,
-        height: 60
+        width: 50,
+        height: 50
     },
     spotlightText: {
         flex: 1,
